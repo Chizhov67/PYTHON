@@ -1,0 +1,40 @@
+import os
+import logging
+from collections import namedtuple
+
+logging.basicConfig(filename='directory_info.log', level=logging.INFO)
+
+FileInfo = namedtuple('FileInfo', ['name', 'extension', 'is_directory', 'parent_directory'])
+
+
+def get_file_info(file_path):
+    file_info_list = []
+    parent_dir = os.path.basename(file_path)
+
+    for item in os.listdir(file_path):
+        full_path = os.path.join(file_path, item)
+        is_directory = os.path.isdir(full_path)
+        name, extension = os.path.splitext(item)
+        file_info = FileInfo(name, extension, is_directory, parent_dir)
+        file_info_list.append(file_info)
+
+    return file_info_list
+
+
+if __name__ == '__main__':
+    import sys
+
+    if len(sys.argv) != 2:
+        print("Введи так: python main.py <Путь до директории с файлом main.py>")
+        sys.exit(1)
+
+    directory_path = sys.argv[1]
+
+    if not os.path.isdir(directory_path):
+        print("Неверная директория.")
+        sys.exit(1)
+
+    file_info_list = get_file_info(directory_path)
+
+    for file_info in file_info_list:
+        logging.info(file_info)
